@@ -8,8 +8,31 @@ class predicates
     negative : (list, integer, list [out]) multi.
     kuzenko : (integer, list, integer [out]) multi.
     shysh : (list, list, list [out]) nondeterm.
+    getArr : (list, list [out]) multi.
+    checkEl : (list, integer [out]) determ.
+    getTail : (list, list [out]) determ.
 
 clauses
+    getArr([], []).
+
+    getArr([H | T], Res) :-
+        checkEl(T, Second),
+        getTail(T, Tail),
+        checkEl(Tail, Third),
+        H > Second,
+        Third > Second,
+        getArr(T, Res1),
+        Res = [Second | Res1].
+
+    getArr([H | T], Res) :-
+        getArr(T, Res).
+
+    checkEl([H | T], I) :-
+        I = H.
+
+    getTail([H | T], Tail) :-
+        Tail = T.
+
     kuzenko(_, [], 0).
 
     kuzenko(H1, [H2 | T2], Counter) :-
@@ -43,6 +66,9 @@ clauses
 clauses
     run() :-
         console::init(),
+        getArr([3, 2, 1, 5, 4, 7, 6], Res3),
+        stdio::nl,
+        console::write(Res3),
         negative([1, 2, -1, 3, 4, -5], 0, Res),
         T = list::length(Res),
         stdio::nl,
